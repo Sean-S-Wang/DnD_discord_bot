@@ -5,6 +5,15 @@ from datetime import datetime
 from pathlib import Path
 
 
+def yes_or_no(question):
+    while "the answer is invalid":
+        reply = str(input(question+' (y/n): ')).lower().strip()
+        if reply[:1] == 'y':
+            return True
+        if reply[:1] == 'n':
+            return False
+
+
 class DungeonMaster:
 
     def __init__(self, name, character_class='Dungeon Master'):
@@ -18,6 +27,7 @@ class DungeonMaster:
         print(self.character_dictionary[character_name].__dict__)
 
     def add_character_to_database(self, character_name=None, character_class=None, strength=0, dexterity=0, intellect=0):
+        # TODO: Make it so it just asks for the information not already provided in the function call
         if character_name is None or character_class is None:
             print("What is the character's name?")
             character_name = input()
@@ -70,6 +80,16 @@ class DungeonMaster:
             elif dm_command.lower() == "end campaign":
                 self.end_campaign()
                 break
+            elif dm_command.lower() == "check character":
+                print("what is the character's name?")
+                name = input()
+                try:
+                    self.check_character_database(name)
+                except KeyError:
+                    if yes_or_no("That character doesn't exist, do you want to add him?"):
+                        self.add_character_to_database()
+                    else:
+                        pass
             else:
                 print("the DM can't do that")
 

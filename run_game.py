@@ -1,15 +1,6 @@
-from DungeonMaster import DungeonMaster
+from DungeonMaster import DungeonMaster, yes_or_no
 from argparse import ArgumentParser
 import sys
-
-
-def yes_or_no(question):
-    while "the answer is invalid":
-        reply = str(input(question+' (y/n): ')).lower().strip()
-        if reply[:1] == 'y':
-            return True
-        if reply[:1] == 'n':
-            return False
 
 
 def main(args=None):
