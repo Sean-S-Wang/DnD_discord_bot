@@ -3,6 +3,15 @@ from argparse import ArgumentParser
 import sys
 
 
+def yes_or_no(question):
+    while "the answer is invalid":
+        reply = str(input(question+' (y/n): ')).lower().strip()
+        if reply[:1] == 'y':
+            return True
+        if reply[:1] == 'n':
+            return False
+
+
 def main(args=None):
     if args is None:
         args = sys.argv[1:]
@@ -10,8 +19,8 @@ def main(args=None):
     # Parse inputs
     parser = ArgumentParser(description='dnd game entrypoint', prog='run_game')
 
-    parser.add_argument('-n', '--campaign_name', dest='campaign_name', required=True)
     parser.add_argument('-d', '--dm_name', dest='dm_name', required=True)
+    parser.add_argument('-n', '--campaign_name', dest='campaign_name', required=False, default=None)
     parser.add_argument('-r', '--rule_set', dest='rule_set', required=False, default='Pathfinder')
 
     args, unknown = parser.parse_known_args(args)
@@ -21,18 +30,22 @@ def main(args=None):
         print(unknown)
         return
 
-    print("Welcome to " + args.campaign_name + ". Your DM is " + args.dm_name)
-
     dm1 = DungeonMaster(args.dm_name)
+    # Create a new campaign
+    if yes_or_no(r"Do you want to start a new campaign?"):
+        dm1.create_campaign()
+        dm1.resume_campaign()
+    else:
+        if yes_or_no("Do you want to load a old campaign?"):
+            # Load a campaign
+            dm1.load_campaign()
+            # Resume the gameplay loop
+            dm1.resume_campaign()
+        else:
+            pass
+        print("There's nothing left do do...")
 
-    # Initiative Roll
-    print(dm1.roll_dice([6, 10, 20]))
-
-    # Add character to game
-    dm1.add_character_to_database("Debbie", "Mage", strength=10, dexterity=10, intellect=10)
-    dm1.check_character_database("Debbie")
-    dm1.add_character_to_database("George", "Warrior", strength=20, dexterity=10, intellect=0)
-    dm1.check_character_database("George")
+    print("Thank you for using the DnD Bot")
 
 
 if __name__ == "__main__":
