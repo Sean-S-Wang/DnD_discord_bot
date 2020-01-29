@@ -23,6 +23,13 @@ class DungeonMaster:
         self.log = []
         self.campaign = None
 
+    @staticmethod
+    def roll_dice(dice_in_roll=[6]):
+        results_of_roll = np.zeros(dice_in_roll.__len__())
+        for current_roll, number_of_sides_on_dice in enumerate(dice_in_roll):
+            results_of_roll[current_roll] = np.random.randint(1, high=np.max(number_of_sides_on_dice))
+        return results_of_roll
+
     def check_character_database(self, character_name):
         print(self.character_dictionary[character_name].__dict__)
 
@@ -42,12 +49,19 @@ class DungeonMaster:
         self.character_dictionary[character_name] = CharacterDatabase(character_name, character_class,
                                                                       strength, dexterity, intellect)
 
-    @staticmethod
-    def roll_dice(dice_in_roll=[6]):
-        results_of_roll = np.zeros(dice_in_roll.__len__())
-        for current_roll, number_of_sides_on_dice in enumerate(dice_in_roll):
-            results_of_roll[current_roll] = np.random.randint(1, high=np.max(number_of_sides_on_dice))
-        return results_of_roll
+    def initiate_versus_roll(self, list_of_players, list_of_dice):
+
+        for player_idx, player in enumerate(list_of_players):
+
+            if not isinstance(player, CharacterDatabase):
+                print("character is not an instance of Class CharacterDatabase")
+                continue
+
+            roll_result = self.roll_dice(dice_in_roll=list_of_dice)
+            player_name = player.character_name
+
+            # print("The roll result of " + str(player_name) + " is " + roll_result)
+            print(player_name, roll_result)
 
     def add_note(self, note):
         self.log.append(note)
@@ -90,6 +104,29 @@ class DungeonMaster:
                         self.add_character_to_database()
                     else:
                         pass
+            elif dm_command.lower() == "versus roll":
+                print("Who is participating in the roll?")
+                names = input()
+                names = names.split(' ')
+                character_list = []
+                fail_character_search = False
+                for name in names:
+                    if not (name in self.character_dictionary.keys()):
+                        print(name + " does not exist!")
+                        fail_character_search = True
+                        break
+                    character_list.append(self.character_dictionary[name])
+                if fail_character_search is True:
+                    continue
+                print("What dice will be used in the roll?")
+                dice = input()
+                dice = dice.split(' ')
+                try:
+                    dice = [int(i) for i in dice]
+                except ValueError:
+                    print("Please use valid dice numbers!")
+                    continue
+                self.initiate_versus_roll(character_list, dice)
             else:
                 print("the DM can't do that")
 
@@ -120,8 +157,7 @@ class Campaign:
 
 
 def main():
-    print("Dungeon Master Demo")
-    dungeon_master = DungeonMaster("Sean")
+    print("Testing")
 
 
 if __name__ == "__main__":
