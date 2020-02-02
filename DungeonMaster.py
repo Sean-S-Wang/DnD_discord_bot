@@ -38,6 +38,11 @@ class DungeonMaster:
         if character_name is None or character_class is None:
             print("What is the character's name?")
             character_name = input()
+
+            while(self.check_if_character_in_db(character_name)):
+                print("Character name already exists in database, please choose a different character name.")
+                character_name = input()
+
             print("What is the character's class?")
             character_class = input()
             print("What is the character's strength?")
@@ -46,8 +51,20 @@ class DungeonMaster:
             dexterity = input()
             print("What is the character's intellect?")
             intellect = input()
+
+
         self.character_dictionary[character_name] = CharacterDatabase(character_name, character_class,
                                                                       strength, dexterity, intellect)
+
+    def check_if_character_in_db(self, character_name):
+
+        if character_name in self.character_dictionary.keys():
+            return True
+        else:
+            return False
+
+
+
 
     def initiate_versus_roll(self, list_of_players, list_of_dice):
 
